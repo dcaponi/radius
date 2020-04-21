@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/onelogin/onelogin-go-sdk/pkg/client"
+	"github.com/onelogin/onelogin-go-sdk/pkg/models"
+	"github.com/onelogin/onelogin-go-sdk/pkg/oltypes"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"
 )
@@ -20,25 +22,43 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	resp, auth, err := oneloginClient.Services.AuthV2.Authorize()
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(resp)
-	fmt.Println(*auth.AccessToken)
 
 	handler := func(w radius.ResponseWriter, r *radius.Request) {
 		username := rfc2865.UserName_GetString(r.Packet)
-		password := rfc2865.UserPassword_GetString(r.Packet)
+		password, er := rfc2865.UserPassword_LookupString(r.Packet)
+		if er != nil {
+			fmt.Println("ERROR")
+			fmt.Println(er)
+		}
+		fmt.Printf("UN %s PW %s:\n", username, password)
+
+		attrs := r.Packet.Attributes
+		for k, v := range attrs {
+			fmt.Printf("K: %d, V: %s\n", k, string(v[0]))
+		}
+
+		subdomain := os.Getenv("OL_SUBDOMAIN")
+
+		request := &models.SessionLoginTokenRequest{
+			UsernameOrEmail: oltypes.String(username),
+			Password:        oltypes.String(password),
+			Subdomain:       oltypes.String(subdomain),
+		}
 
 		var code radius.Code
-		// authenticate username and password with ol. make this a goroutine (new thread) call
-		// read response from channel when goroutine finishes
-		if username == "tim" && password == "12345" {
+
+		resp, _, err := oneloginClient.Services.SessionLoginTokensV1.CreateSessionLoginToken(request)
+		if err != nil {
+			log.Println(err)
+			code = radius.CodeAccessReject
+		}
+
+		if resp.StatusCode == 200 {
 			code = radius.CodeAccessAccept
 		} else {
 			code = radius.CodeAccessReject
 		}
+
 		// handle challenge here?
 		log.Printf("Writing %v to %v", code, r.RemoteAddr)
 		w.Write(r.Response(code))
@@ -46,7 +66,7 @@ func main() {
 
 	server := radius.PacketServer{
 		Handler:      radius.HandlerFunc(handler),
-		SecretSource: radius.StaticSecretSource([]byte(`secret`)),
+		SecretSource: radius.StaticSecretSource([]byte(`testing123`)),
 	}
 
 	log.Printf("Starting server on :1812")
