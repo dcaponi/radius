@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -20,23 +19,12 @@ func main() {
 		Url:          os.Getenv("OL_ENDPOINT"),
 	})
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	handler := func(w radius.ResponseWriter, r *radius.Request) {
 		username := rfc2865.UserName_GetString(r.Packet)
-		password, er := rfc2865.UserPassword_LookupString(r.Packet)
-		if er != nil {
-			fmt.Println("ERROR")
-			fmt.Println(er)
-		}
-		fmt.Printf("UN %s PW %s:\n", username, password)
-
-		attrs := r.Packet.Attributes
-		for k, v := range attrs {
-			fmt.Printf("K: %d, V: %s\n", k, string(v[0]))
-		}
-
+		password := rfc2865.UserPassword_GetString(r.Packet)
 		subdomain := os.Getenv("OL_SUBDOMAIN")
 
 		request := &models.SessionLoginTokenRequest{
@@ -45,13 +33,12 @@ func main() {
 			Subdomain:       oltypes.String(subdomain),
 		}
 
-		var code radius.Code
-
 		resp, _, err := oneloginClient.Services.SessionLoginTokensV1.CreateSessionLoginToken(request)
 		if err != nil {
 			log.Println(err)
-			code = radius.CodeAccessReject
 		}
+
+		var code radius.Code
 
 		if resp.StatusCode == 200 {
 			code = radius.CodeAccessAccept
@@ -59,7 +46,6 @@ func main() {
 			code = radius.CodeAccessReject
 		}
 
-		// handle challenge here?
 		log.Printf("Writing %v to %v", code, r.RemoteAddr)
 		w.Write(r.Response(code))
 	}
