@@ -12,11 +12,16 @@ import (
 )
 
 func main() {
+	clientID := os.Getenv("OL_CLIENT_ID")
+	clientSecret := os.Getenv("OL_CLIENT_SECRET")
+	clientEndpoint := os.Getenv("OL_ENDPOINT")
+	radiusSecret := os.Getenv("RADIUS_SECRET")
+
 	oneloginClient, err := client.NewClient(&client.APIClientConfig{
-		Timeout:      5,
-		ClientID:     os.Getenv("OL_CLIENT_ID"),
-		ClientSecret: os.Getenv("OL_CLIENT_SECRET"),
-		Url:          os.Getenv("OL_ENDPOINT"),
+		Timeout:      60,
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
+		Url:          clientEndpoint,
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -52,7 +57,7 @@ func main() {
 
 	server := radius.PacketServer{
 		Handler:      radius.HandlerFunc(handler),
-		SecretSource: radius.StaticSecretSource([]byte(`testing123`)),
+		SecretSource: radius.StaticSecretSource([]byte(radiusSecret)),
 	}
 
 	log.Printf("Starting server on :1812")
