@@ -1,7 +1,10 @@
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/onelogin/onelogin-go-sdk v0.1.3 h1:QEXQ4p/3LDC2icrech2r8Um9lKlhhKel6Fd7+4b52Ro=
-github.com/onelogin/onelogin-go-sdk v0.1.3/go.mod h1:UWitMEuAwTPydzICCjd6PQ9YQC2Ub7VVzFDk1K60Pj8=
+github.com/kr/pretty v0.2.0/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
+github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
+github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
+github.com/onelogin/onelogin-go-sdk v0.1.5 h1:4p7ytYHjMMHx5Gmmeq+hY7kBkwA1L9nzyiLcnn0efeE=
+github.com/onelogin/onelogin-go-sdk v0.1.5/go.mod h1:9I4T0RFcsdYJVrw9Az0C5e8AoFS2pPRvDbqMfQNqQs4=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.2.0/go.mod h1:qt09Ya8vawLte6SNmTgCsAVtYtaKzEcn8ATUoHMkEqE=
